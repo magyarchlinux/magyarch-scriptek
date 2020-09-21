@@ -1,0 +1,30 @@
+#! /bin/sh
+
+# Create MagyArchLinux 2020 <krive@magyarchlinux.org>
+# Arch Linux auto-update and loging.
+
+# Check cronie installed.
+pacman -Qs cronie > /dev/null
+OUTPUT="$?"
+
+sudo cp cronpacman /usr/bin
+
+if [[ "$OUTPUT" -eq 1 ]]
+then
+    sudo pacman -Qs cronie --noconfirm
+    sudo systemctl enable cronie.service
+    sudo systemctl start cronie.service
+    echo -e "\n0 */10 * * * $(which cronpacman)\n" | sudo tee -a /var/spool/cron/root
+else
+    systemctl list-unit-files --state enabled --type service | grep "cronie" > /dev/null
+    OUTPUT_1="$?"
+    if [[ "$OUTPUT_1" -eq 1 ]]
+    then
+        sudo systemctl enable cronie.service
+        sudo systemctl start cronie.service
+        echo -e "\n0 */10 * * * $(which cronpacman)\n" | sudo tee -a /var/spool/cron/root
+    else
+        sudo systemctl start cronie.service
+        echo -e "\n0 */10 * * * $(which cronpacman)\n" | sudo tee -a /var/spool/cron/root 
+    fi
+fi

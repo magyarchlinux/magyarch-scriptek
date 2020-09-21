@@ -1,0 +1,44 @@
+#! /bin/sh
+
+LOGFILE=$(echo "/var/log/cron-pacman-$(date +%Y-%m).log")
+OLD_LOGFILE=$(echo "/var/log/cron-pacman-$(date +%Y-%m --date='-1 month').log")
+
+
+
+# pacman update
+
+if [[ $EUID -ne 0 ]]
+then
+
+    sudo touch $LOGFILE
+    sudo chown $USER $LOGFILE
+
+    # Update mirrors.list
+    sudo reflector --verbose -l 50 -p https --sort rate --save /etc/pacman.d/mirrorlist
+
+    # Update 
+    . /etc/profile && (echo; date; echo; sudo pacman -Syuq --noconfirm) &>>$LOGFILE || (echo ‘pacman failed!’; tail $LOGFILE; false)
+
+    # Clean
+    if [ "$(date +%d)" == "15" ]
+    then
+        sudo rm $OLD_LOGFILE
+    fi
+    sudo chown root $LOGFILE
+else
+
+    # root 
+    # Update mirrors.list
+    reflector --verbose -l 50 -p https --sort rate --save /etc/pacman.d/mirrorlist
+
+    # Update 
+    . /etc/profile && (echo; date; echo; pacman -Syuq --noconfirm) &>>$LOGFILE || (echo ‘pacman failed!’; tail $LOGFILE; false)
+
+    # Clean
+    if [ "$(date +%d)" == "15" ]
+    then
+        rm $OLD_LOGFILE
+    fi
+fi
+
+
