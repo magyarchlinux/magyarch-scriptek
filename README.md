@@ -1,1 +1,1 @@
-# magyarch-scriptek
+# MagyArch scriptek
