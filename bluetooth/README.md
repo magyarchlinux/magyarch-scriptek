@@ -1,0 +1,1 @@
+# MagyArch bluetoth settings
