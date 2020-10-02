@@ -11,7 +11,7 @@ sudo cp cronpacman /usr/bin
 
 if [[ "$OUTPUT" -eq 1 ]]
 then
-    sudo pacman -Qs cronie --noconfirm
+    sudo pacman -S cronie --noconfirm
     sudo systemctl enable cronie.service
     sudo systemctl start cronie.service
     echo -e "\n0 */10 * * * $(which cronpacman)\n" | sudo tee -a /var/spool/cron/root
