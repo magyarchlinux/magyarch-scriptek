@@ -7,7 +7,16 @@
 pacman -Qs cronie > /dev/null
 OUTPUT="$?"
 
+pacman -Qs reflector > /dev/null
+OUTPUT_2="$?"
+
+if [[ "$OUTPUT_2" -eq 1 ]]
+then
+    sudo pacman -S reflector --noconfirm
+fi
+
 sudo cp cronpacman /usr/bin
+
 
 if [[ "$OUTPUT" -eq 1 ]]
 then
